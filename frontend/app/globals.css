@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.medical-card {
+  @apply bg-slate-50 border border-slate-200 rounded-xl shadow-sm p-6;
+}
+
+.risk-bar {
+  @apply h-4 w-full bg-slate-200 rounded-full overflow-hidden;
+}
+
+.risk-level {
+  @apply h-full transition-all duration-500 rounded-full;
+}
+
+.nav-link {
+  @apply px-4 py-2 text-slate-600 hover:text-primary font-medium transition-colors;
+}
+
+.nav-active {
+  @apply border-b-2 border-primary text-primary;
+}
