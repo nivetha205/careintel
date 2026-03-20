@@ -3,10 +3,20 @@
 import { useState, useEffect } from "react";
 import { Search, Filter, MoreVertical, Plus, Users, LayoutGrid, List, X } from "lucide-react";
 
+interface Patient {
+  id: number;
+  name: string;
+  age: number;
+  diagnosis: string;
+  risk_score: number;
+  phone: string;
+  lastVisit?: string;
+}
+
 export default function Patients() {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("list");
-  const [patients, setPatients] = useState<any[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newPatient, setNewPatient] = useState({
     name: "",
@@ -202,7 +212,7 @@ export default function Patients() {
                     <td className="py-5 px-6">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-blue-100 text-primary font-bold rounded-lg flex items-center justify-center text-sm shadow-sm">
-                          {patient.name.split(' ').map(n => n[0]).join('')}
+                          {patient.name.split(' ').map((n: string) => n[0]).join('')}
                         </div>
                         <div>
                           <p className="font-extrabold text-slate-800 group-hover:text-primary transition-colors">
@@ -255,7 +265,7 @@ export default function Patients() {
                 <div key={patient.id} className="bg-slate-50 border border-slate-200 rounded-xl p-6 hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group">
                    <div className="flex justify-between items-start mb-6">
                       <div className="w-12 h-12 bg-white text-primary font-bold rounded-xl flex items-center justify-center text-lg shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
-                        {patient.name.split(' ').map(n => n[0]).join('')}
+                        {patient.name.split(' ').map((n: string) => n[0]).join('')}
                       </div>
                       <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${
                         patient.diagnosis === 'Normal' ? 'bg-white text-green-600 border-green-100' : 'bg-white text-blue-600 border-blue-100'

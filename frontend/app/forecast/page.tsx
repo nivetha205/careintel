@@ -4,9 +4,30 @@ import { useState, useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { TrendingUp, Activity, CheckCircle, Info, Star } from "lucide-react";
 
+interface ChartData {
+  day: string;
+  baseline: number;
+  option1: number;
+  option2: number;
+  option3: number;
+}
+
+interface MedicationOption {
+  name: string;
+  projection: number[];
+  effectiveness: string;
+  reasoning: string;
+}
+
+interface Analysis {
+  risk_score: number;
+  medication_options: MedicationOption[];
+  perfect_choice: MedicationOption;
+}
+
 export default function Forecast() {
-  const [data, setData] = useState<any[]>([]);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [data, setData] = useState<ChartData[]>([]);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   useEffect(() => {
     const lastAnalysis = sessionStorage.getItem("lastAnalysis");
@@ -120,7 +141,7 @@ export default function Forecast() {
                  <span>Clinical Takeaways</span>
               </h3>
               <div className="space-y-4">
-                 {analysis.medication_options.map((m: any, i: number) => (
+                 {analysis.medication_options.map((m: MedicationOption, i: number) => (
                     <div key={i} className="flex items-center justify-between border-b border-slate-50 pb-3">
                        <div>
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{m.name.split(' (')[0]}</p>

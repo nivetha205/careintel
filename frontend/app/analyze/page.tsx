@@ -4,10 +4,32 @@ import { useState } from "react";
 import Link from "next/link";
 import { Upload, FileType, CheckCircle, AlertTriangle, ShieldCheck, UserCheck, Scale, ShieldAlert, Cpu, Stethoscope, Activity, Info } from "lucide-react";
 
+interface MedicationOption {
+  name: string;
+  reasoning: string;
+  effectiveness: string;
+}
+
+interface EthicalAnalysis {
+  safety: string;
+  fairness: string;
+  bias_detection: string;
+  guideline: string;
+  disclaimer: string;
+}
+
+interface AnalysisResult {
+  diagnosis: string[];
+  risk_score: number;
+  perfect_choice: MedicationOption;
+  medication_options: MedicationOption[];
+  ethical_analysis: EthicalAnalysis;
+}
+
 export default function Analyze() {
   const [file, setFile] = useState<File | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +46,12 @@ export default function Analyze() {
         method: "POST",
         body: formData,
       });
+
+      if (!resp.ok) {
+        const errorData = await resp.json();
+        throw new Error(errorData.detail || "Analysis failed");
+      }
+
       const data = await resp.json();
       
       // Simulate analysis delay
@@ -32,10 +60,10 @@ export default function Analyze() {
         sessionStorage.setItem("lastAnalysis", JSON.stringify(data));
         setAnalyzing(false);
       }, 1500);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setAnalyzing(false);
-      alert("Backend connection failed. Ensure FastAPI is running on port 8000.");
+      alert(err.message || "Backend connection failed. Ensure FastAPI is running on port 8000.");
     }
   };
 
@@ -146,13 +174,13 @@ export default function Analyze() {
                      <Stethoscope size={20} />
                      <span className="uppercase tracking-widest text-[10px] font-black text-slate-400 font-sans ml-2">Perfect Clinical Match</span>
                   </h3>
-                  <p className="text-3xl font-black tracking-tight mb-2">{result.perfect_choice.name}</p>
-                  <p className="text-slate-400 font-bold italic text-sm mb-6">{result.perfect_choice.reasoning}</p>
+                  <p className="text-3xl font-black tracking-tight mb-2">{result.perfect_choice?.name || "No Recommendation"}</p>
+                  <p className="text-slate-400 font-bold italic text-sm mb-6">{result.perfect_choice?.reasoning}</p>
                   
                   <div className="p-4 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between">
                      <div>
                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Projected Efficiency</p>
-                        <p className="text-lg font-black text-emerald-400">{result.perfect_choice.effectiveness}</p>
+                        <p className="text-lg font-black text-emerald-400">{result.perfect_choice?.effectiveness}</p>
                      </div>
                      <Link href="/forecast" className="bg-primary hover:bg-blue-700 text-white font-black py-2 px-6 rounded-xl text-xs tracking-widest uppercase transition-all shadow-xl shadow-blue-500/20 active:scale-95">
                         View 7-Day Forecast
@@ -161,7 +189,7 @@ export default function Analyze() {
                 </div>
 
                 <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/30">
-                  {result.medication_options.filter((o:any) => o.name !== result.perfect_choice.name).map((opt: any, i: number) => (
+                  {(result.medication_options || []).filter((o: MedicationOption) => o.name !== result.perfect_choice?.name).map((opt: MedicationOption, i: number) => (
                     <div key={i} className="p-6 border border-slate-100 rounded-2xl hover:border-primary/20 transition-all bg-white shadow-sm hover:shadow-md group">
                        <div className="flex justify-between items-start mb-3">
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Alternative Protocol {i+1}</p>

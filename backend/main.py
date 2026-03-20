@@ -4,6 +4,10 @@ from pydantic import BaseModel
 import uvicorn
 import json
 import os
+import sys
+
+# Ensure current directory is in sys.path for engine imports
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import engine modules
 from engine.pdf_processor import ClinicalExtractor
@@ -50,10 +54,11 @@ async def analyze_report(file: UploadFile = File(...)):
         rec_result = RecommendationEngine.recommend(diagnosis_result["diagnosis"])
         
         # Ethical Analysis
+        medicine_name = rec_result.get("perfect_choice", {}).get("name", "Unknown")
         ethical_analysis = EthicalEngine.analyze_ethics(
             clinical_data, 
             diagnosis_result["diagnosis"], 
-            rec_result["perfect_choice"]["name"]
+            medicine_name
         )
         
         return {
