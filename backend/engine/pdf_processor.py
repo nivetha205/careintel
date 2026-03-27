@@ -10,7 +10,7 @@ class ClinicalExtractor:
             for page in pdf.pages:
                 text += page.extract_text() + "\n"
         
-        return ClinicalExtractor.parse_clinical_data(text)
+        return ClinicalExtractor.parse_clinical_data(text), text
 
     @staticmethod
     def parse_clinical_data(text: str):
